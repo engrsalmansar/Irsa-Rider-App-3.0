@@ -100,18 +100,26 @@ const App: React.FC = () => {
   };
 
   const requestNotificationPermission = async () => {
-    if ('Notification' in window && Notification.permission !== 'granted') {
-      await Notification.requestPermission();
+    if ('Notification' in window) {
+      if (Notification.permission !== 'granted') {
+        await Notification.requestPermission();
+      }
     }
   };
 
   const sendSystemNotification = () => {
     if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('Irsa Kitchen', {
-        body: 'New Order Detected!',
-        icon: '/favicon.ico',
-        tag: 'new-order'
-      });
+      try {
+        new Notification('Irsa Kitchen', {
+          body: 'New Order Detected!',
+          icon: '/favicon.ico',
+          tag: 'new-order',
+          requireInteraction: true,
+          silent: false
+        });
+      } catch (e) {
+        console.error("Notification failed", e);
+      }
     }
   };
 
@@ -127,16 +135,25 @@ const App: React.FC = () => {
   const triggerAlert = () => {
     setStatus(MonitorStatus.ALERT);
     sendSystemNotification();
+    
+    // Add vibration for mobile phones
+    if (navigator.vibrate) {
+      navigator.vibrate([500, 200, 500, 200, 500]);
+    }
+
     if (!isMuted) audioService.playAlert();
   };
 
   const startMonitoring = async (isUserInteraction = true) => {
     setStatus(MonitorStatus.ACTIVE);
     localStorage.setItem(STORAGE_KEYS.MONITORING_ENABLED, 'true');
+    
     if (isUserInteraction) {
+      // Important: Unlock audio context and request permissions on user interaction
       audioService.playAlert(0); 
       await requestNotificationPermission();
     }
+    
     await requestWakeLock();
     workerRef.current?.postMessage({
       command: 'START',
