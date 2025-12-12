@@ -1,0 +1,15 @@
+{
+  "appId": "com.irsakitchen.rider",
+  "appName": "Irsa Rider",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "Keyboard": {
+      "resize": "body",
+      "style": "dark",
+      "resizeOnFullScreen": true
+    }
+  }
+}
