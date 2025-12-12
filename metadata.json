@@ -2,6 +2,7 @@
   "name": "Irsa Delivery App 2.0",
   "description": "A PWA wrapper for the Irsa Kitchen delivery system with automated background monitoring and audible alerts for new orders.",
   "requestFramePermissions": [
-    "microphone"
+    "microphone",
+    "notifications"
   ]
 }
